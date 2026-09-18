@@ -4,6 +4,75 @@ End-to-end pipeline for creating photorealistic 3D Gaussian Splatting models fro
 
 **Video → Frames → COLMAP → 3DGS Training → PLY → USDZ → Isaac Sim**
 
+## 🎬 Example Result
+
+![3D Gaussian Splatting Example](example.gif)
+
+---
+
+## 🔬 Pipeline Explanation
+
+This pipeline converts a simple walkthrough video of a physical space into a photorealistic, physics-enabled 3D environment for robotic simulation. Here is what happens at each stage:
+
+```mermaid
+flowchart LR
+    A["📱 Video\nCapture"] --> B["🎞️ FFmpeg\nFrame Extraction"]
+    B --> C["🔍 Blur\nDetection"]
+    C --> D["📐 COLMAP\nSfM + MVS"]
+    D --> E["🧠 Splatfacto\n3DGS Training"]
+    E --> F["📦 Export\nPLY + USDZ"]
+    F --> G["🔧 Collision\nMesh Generation"]
+    G --> H["🤖 Isaac Sim\nImport"]
+```
+
+### Stage 1: Video Capture → Frame Extraction
+The input is a standard video file (`.MOV`, `.mp4`) captured by walking through the target environment with a smartphone or camera. **FFmpeg** extracts individual frames at a configurable rate (default: 2 FPS). This sampling rate balances between having enough viewpoint coverage for accurate 3D reconstruction and avoiding redundant, nearly-identical frames that slow down processing.
+
+### Stage 2: Blur Detection & Frame Filtering
+Motion blur is the #1 enemy of photogrammetric reconstruction. The `blur_detector.py` script computes a **Laplacian variance** sharpness score for each frame — this mathematical operator detects the presence of sharp edges. Frames below the threshold (default: 15) are discarded. This dramatically improves COLMAP's ability to find reliable feature matches between images.
+
+### Stage 3: COLMAP — Structure from Motion (SfM)
+[COLMAP](https://colmap.github.io/) performs **Structure from Motion**, which is the process of:
+1. **Feature Detection**: Finding distinctive visual features (corners, edges, textures) in every image using SIFT descriptors.
+2. **Feature Matching**: Finding which features in different images correspond to the same physical point in the real world.
+3. **Bundle Adjustment**: Simultaneously solving for the exact 3D position of each matched point AND the precise camera pose (position + orientation) for every image.
+
+The output is a **sparse point cloud** (typically 100k–600k points) representing the 3D structure of the scene, along with the exact camera intrinsics (focal length, principal point) and extrinsics (position, rotation) for every training image. These are saved in `transforms.json`.
+
+### Stage 4: 3D Gaussian Splatting Training
+This is the core of the pipeline. [3D Gaussian Splatting (3DGS)](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/) represents a 3D scene as millions of tiny, colored, semi-transparent 3D ellipsoids ("splats") instead of traditional triangle meshes or neural radiance fields.
+
+**How training works:**
+- Each Gaussian is defined by: **position** (x,y,z), **covariance** (3D shape/orientation), **opacity** (transparency), and **spherical harmonics** (view-dependent color).
+- The renderer "splatts" these 3D Gaussians onto a 2D image plane using differentiable rasterization.
+- The rendered image is compared against the real training photo, and the error is backpropagated to adjust every Gaussian's parameters.
+- **Adaptive Density Control** periodically clones/splits Gaussians in under-reconstructed regions and culls transparent or oversized ones.
+
+**Key training parameters** (see `configs/training_presets.ini`):
+| Parameter | What it controls |
+|:---|:---|
+| `densify_grad_thresh` | How aggressively new Gaussians are spawned (lower = more splats, fills holes) |
+| `stop_split_at` | Iteration to freeze geometry (remaining iterations optimize color only) |
+| `cull_scale_thresh` | Maximum allowed splat size (lower = prevents large blurry blobs) |
+| `cull_alpha_thresh` | Minimum opacity to survive (removes transparent "ghost" splats) |
+
+### Stage 5: Export & Conversion
+The trained model is exported as a **PLY file** containing all Gaussian parameters. This PLY is then converted to **USDZ** (Universal Scene Description, zipped) using `usd-convert-gsplat`, which is the native format for NVIDIA Isaac Sim and Apple's AR ecosystem.
+
+### Stage 6: Post-Processing (Optional)
+- **SuperSplat Cropping**: The exported PLY can be loaded into [SuperSplat](https://playcanvas.com/supersplat/editor) to visually crop the scene, remove stray Gaussians outside the region of interest, and align the model to the world grid.
+- **Floater Removal**: Scripts like `filter_gaussians.py` and `remove_floaters_smart.py` programmatically remove "floater" artifacts — hazy, semi-transparent Gaussians that appear in empty space due to depth ambiguities during training.
+
+### Stage 7: Collision Mesh Generation
+Physics engines (like PhysX in Isaac Sim) cannot interact with Gaussian splats because they are mathematical primitives, not geometric surfaces. The `create_collision_mesh.py` script solves this by:
+1. Extracting the 3D center positions of all Gaussians.
+2. Estimating surface normals using K-Nearest Neighbors analysis.
+3. Running **Poisson Surface Reconstruction** to generate a watertight triangle mesh that perfectly wraps around the splat geometry.
+4. Filtering hallucinated outer geometry using density analysis.
+5. Decimating to a target triangle count for real-time physics performance.
+
+The resulting invisible collision mesh is overlaid on the visual splats in Isaac Sim, allowing robots to physically interact with floors, walls, and obstacles.
+
 ---
 
 ## 📁 Project Structure
