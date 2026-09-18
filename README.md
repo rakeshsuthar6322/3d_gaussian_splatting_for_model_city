@@ -57,7 +57,7 @@ project/
 
 ```bash
 # Clone this repository
-git clone https://github.com/<your-username>/<repo-name>.git
+[git clone https://github.com/<your-username>/<repo-name>.git](https://github.com/rakeshsuthar6322/3d_gaussian_splatting_for_model_city.git)
 cd <repo-name>
 
 # Run one-time setup (creates conda environments, clones Depth-Anything-V2,
