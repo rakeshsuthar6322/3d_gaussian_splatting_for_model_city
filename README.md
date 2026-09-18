@@ -58,7 +58,7 @@ project/
 ```bash
 # Clone this repository
 https://github.com/rakeshsuthar6322/3d_gaussian_splatting_for_model_city.git
-cd <repo-name>
+cd 3d_gaussian_splatting_for_model_city
 
 # Run one-time setup (creates conda environments, clones Depth-Anything-V2,
 # downloads model weights — takes ~10 minutes)
