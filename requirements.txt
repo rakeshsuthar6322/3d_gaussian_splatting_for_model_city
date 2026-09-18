@@ -1,0 +1,18 @@
+# ── Python Packages ──────────────────────────────────────────────────────────
+nerfstudio
+open3d>=0.17.0
+plyfile>=0.9
+numpy>=1.24
+opencv-python>=4.8
+scikit-learn>=1.3
+torch>=2.0
+torchvision>=0.15
+
+# ── Optional (for depth estimation) ──────────────────────────────────────────
+# These are needed only if you use generate_dense_pointcloud.py:
+# - Depth-Anything-V2 (git clone from GitHub)
+# - depth_anything_v2_vitl.pth (download model weights)
+
+# ── Optional (for USDZ conversion) ──────────────────────────────────────────
+# Install in a separate conda env (usd_convert):
+# usd-convert-gsplat

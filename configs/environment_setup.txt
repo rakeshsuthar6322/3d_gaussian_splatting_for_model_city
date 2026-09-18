@@ -1,0 +1,26 @@
+# Environment Setup for 3DGS Isaac Sim Pipeline
+# ================================================
+# Two conda environments are required:
+#
+# 1. gs_pipeline — Main training and processing environment
+# 2. usd_convert — USD/USDZ conversion environment
+
+# ── gs_pipeline ──────────────────────────────────────────────────────────────
+# Create:
+#   conda create -n gs_pipeline python=3.10 -y
+#   conda activate gs_pipeline
+#   pip install nerfstudio open3d plyfile scikit-learn opencv-python
+#
+# For depth estimation (optional):
+#   git clone https://github.com/DepthAnything/Depth-Anything-V2.git
+#   Download: depth_anything_v2_vitl.pth
+
+# ── usd_convert ──────────────────────────────────────────────────────────────
+# Create:
+#   conda create -n usd_convert python=3.10 -y
+#   conda activate usd_convert
+#   pip install usd-convert-gsplat
+
+# ── Environment Variables ────────────────────────────────────────────────────
+# Required for loading nerfstudio checkpoints:
+#   export TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1

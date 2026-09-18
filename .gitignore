@@ -1,0 +1,58 @@
+# ── Large binary files (DO NOT commit to Git) ────────────────────────────────
+*.ply
+*.usdz
+*.usd
+*.obj
+*.pth
+*.ckpt
+*.bin
+*.ssproj
+
+# ── Training outputs ─────────────────────────────────────────────────────────
+data/processed/training_output/
+
+# ── Video files ──────────────────────────────────────────────────────────────
+*.MOV
+*.mp4
+*.avi
+*.mkv
+
+# ── Image data (too large for git) ───────────────────────────────────────────
+data/frames/*.jpg
+data/frames/*.png
+data/frames_clean/*.jpg
+data/frames_clean/*.png
+data/processed/images/
+data/processed/images_*/
+data/processed/colmap/
+
+# ── Keep .gitkeep files ──────────────────────────────────────────────────────
+!.gitkeep
+
+# ── Third-party cloned repos ────────────────────────────────────────────────
+third_party/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Environment ──────────────────────────────────────────────────────────────
+.env
+*.log
+.torch_extensions/
+
+# ── IDE ──────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
