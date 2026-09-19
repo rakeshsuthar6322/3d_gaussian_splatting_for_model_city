@@ -10,19 +10,19 @@ End-to-end pipeline for creating photorealistic 3D Gaussian Splatting models fro
 
 ---
 
-## 🔬 Pipeline Explanation
+## Pipeline Explanation
 
 This pipeline converts a simple walkthrough video of a physical space into a photorealistic, physics-enabled 3D environment for robotic simulation. Here is what happens at each stage:
 
 ```mermaid
 flowchart LR
-    A["📱 Video\nCapture"] --> B["🎞️ FFmpeg\nFrame Extraction"]
-    B --> C["🔍 Blur\nDetection"]
-    C --> D["📐 COLMAP\nSfM + MVS"]
-    D --> E["🧠 Splatfacto\n3DGS Training"]
-    E --> F["📦 Export\nPLY + USDZ"]
-    F --> G["🔧 Collision\nMesh Generation"]
-    G --> H["🤖 Isaac Sim\nImport"]
+    A["Video\nCapture"] --> B["FFmpeg\nFrame Extraction"]
+    B --> C["Blur\nDetection"]
+    C --> D["COLMAP\nSfM + MVS"]
+    D --> E["Splatfacto\n3DGS Training"]
+    E --> F["Export\nPLY + USDZ"]
+    F --> G["Collision\nMesh Generation"]
+    G --> H["Isaac Sim\nImport"]
 ```
 
 ### Stage 1: Video Capture → Frame Extraction
@@ -75,7 +75,7 @@ The resulting invisible collision mesh is overlaid on the visual splats in Isaac
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 project/
@@ -120,7 +120,7 @@ project/
 
 ---
 
-## 🏁 Quick Start (3 Commands)
+## Quick Start (3 Commands)
 
 ### Step 1: Clone and Setup
 
@@ -170,7 +170,7 @@ That's it! ☕ Go grab a coffee. When it finishes (~30-45 minutes depending on v
 
 ---
 
-## ⚙️ Prerequisites
+## Prerequisites
 
 | Requirement | Why | How to Check |
 |:---|:---|:---|
@@ -185,7 +185,7 @@ That's it! ☕ Go grab a coffee. When it finishes (~30-45 minutes depending on v
 
 ---
 
-## 🔧 What Gets Cloned / Downloaded
+## What Gets Cloned / Downloaded
 
 The `setup.sh` script automatically handles all of this:
 
@@ -203,7 +203,7 @@ The `setup.sh` script automatically handles all of this:
 
 ---
 
-## 🧪 Running Individual Steps
+## Running Individual Steps
 
 If you want to run steps individually instead of the full pipeline:
 
@@ -280,19 +280,19 @@ conda run -n gs_pipeline python scripts/generate_dense_pointcloud.py \
 
 ---
 
-## 📊 Training Presets
+## Training Presets
 
 | Preset | `densify_grad_thresh` | `stop_split_at` | `cull_scale_thresh` | Best For |
 |:---|:---|:---|:---|:---|
 | **Default** | 0.0008 | 15000 | 0.5 | General scenes |
 | **Aggressive** | 0.0001 | 25000 | 0.5 | Scenes with large holes |
-| **Refined** ⭐ | 0.0002 | 15000 | 0.2 | Best quality (default in pipeline) |
+| **Refined** | 0.0002 | 15000 | 0.2 | Best quality (default in pipeline) |
 
 See [`configs/training_presets.ini`](configs/training_presets.ini) for details.
 
 ---
 
-## 🤖 Importing into Isaac Sim
+## Importing into Isaac Sim
 
 1. Drag `outputs/splat/splat.usdz` into your Isaac Sim stage
 2. Drag `outputs/collision/collision_map.obj` into the same stage
@@ -303,7 +303,7 @@ See [`configs/training_presets.ini`](configs/training_presets.ini) for details.
 
 ---
 
-## 📋 Key Lessons Learned
+## Key Lessons Learned
 
 1. **Aggressive densification** fills holes but may create floaters — follow up with filter scripts
 2. **`cull_scale_thresh = 0.2`** prevents large clumpy splats in detailed areas
@@ -314,13 +314,13 @@ See [`configs/training_presets.ini`](configs/training_presets.ini) for details.
 
 ---
 
-## 📄 License
+## License
 
 This project is for research and educational purposes.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Nerfstudio](https://nerf.studio/) — Gaussian Splatting training framework
 - [Depth Anything V2](https://github.com/DepthAnything/Depth-Anything-V2) — Monocular depth estimation
