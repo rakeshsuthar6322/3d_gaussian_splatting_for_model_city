@@ -4,7 +4,7 @@ End-to-end pipeline for creating photorealistic 3D Gaussian Splatting models fro
 
 **Video → Frames → COLMAP → 3DGS Training → PLY → USDZ → Isaac Sim**
 
-## 🎬 Example Result
+## Example Result
 
 ![3D Gaussian Splatting Example](example.gif)
 
